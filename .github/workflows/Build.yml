@@ -30,7 +30,13 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Free Disk Space
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clean space (if selected)
+        if: github.event.inputs.CLEAN_BUILD == 'true'
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: true
@@ -39,11 +45,6 @@ jobs:
           haskell: true
           large-packages: true
           swap-storage: true
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install Build Dependencies
         run: |
@@ -64,16 +65,11 @@ jobs:
       - name: Set Scripts Executable
         run: |
           chmod +x build_kernel.sh
-          chmod +x clean_build.sh
           chmod +x scripts/config
           chmod +x scripts/repack
           chmod +x scripts/bin/magiskboot
           chmod +x scripts/bin/ksud-x86_64-unknown-linux-musl
           chmod +x scripts/bin/avb/avbtool.py
-
-      - name: Clean Build if Selected
-        if: github.event.inputs.CLEAN_BUILD == 'true'
-        run: ./clean_build.sh
 
       - name: Build and Package
         id: build_chain
@@ -103,3 +99,4 @@ jobs:
             ${{ steps.build_chain.outputs.final_tar_name }}
             kernel_modules.zip
           if-no-files-found: warn
+
