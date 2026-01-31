@@ -219,6 +219,18 @@ static int mtk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
 	u32 pcw = 0;
 	u32 postdiv;
 
+	/* GPU OVERCLOCK HACK */
+	if (strcmp(pll->data->name, "mfgpll") == 0) {
+		if (rate >= 1100000000) {
+			// These are the magic bits for ~1.1GHz on MT6789
+			// We bypass the calculation entirely
+			pcw = 0x2A5555; 
+			postdiv = 0;    
+			mtk_pll_set_rate_regs(pll, pcw, postdiv);
+			return 0;
+		}
+	}
+
 	mtk_pll_calc_values(pll, &pcw, &postdiv, rate, parent_rate);
 	if (!mtk_fh_set_rate || !mtk_fh_set_rate(pll->data->name, pcw, postdiv))
 		mtk_pll_set_rate_regs(pll, pcw, postdiv);
