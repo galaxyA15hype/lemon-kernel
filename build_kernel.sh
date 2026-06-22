@@ -83,17 +83,10 @@ print_msg "$GREEN" "Modifying configs..."
 --set-str DEFAULT_TCP_CONG "bbr" \
 --set-val DEFAULT_RENO n \
 --set-val DEFAULT_CUBIC n \
---set-val KSU y
 
 print_msg "$GREEN" "Modified configs ..."
 
 cd kernel-5.10
-
-print_msg "$GREEN" "Setting up KernelSU..."
-
-curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/refs/heads/main/kernel/setup.sh"
-
-print_msg "$GREEN" "Finished Setting up KernelSU..."
 
 #print_msg "$GREEN" "Patching up Kernel..."
 #patch -p1 -F 3 < ../patches/syscall_hooks.patch
